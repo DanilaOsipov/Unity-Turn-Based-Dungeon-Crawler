@@ -531,3 +531,4 @@ MonoBehaviour:
   minEnemiesCount: 10
   maxEnemiesCount: 15
   dungeonMap: {fileID: 270779198}
+  enemiesTarget: {fileID: 65498284}

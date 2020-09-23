@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-[RequireComponent(typeof(DungeonMap))]
 public class DungeonGenerator : MonoBehaviour
 {
     [SerializeField] private int rowsCount;
@@ -11,7 +11,16 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject floorGridPrefab;
     [SerializeField] private GameObject wallCubePrefab;
 
-    private DungeonMap dungeonMap;
+    [SerializeField] private GameObject player;
+
+    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private int minEnemiesCount = 10;
+    [SerializeField] private int maxEnemiesCount = 15;
+
+    private int roomsCounter;
+    private List<RoomsTreeNode> rooms;
+
+    private Dictionary<Transform, Vector3> objectPositionPairs;
 
     private void Awake()
     {
@@ -20,6 +29,10 @@ public class DungeonGenerator : MonoBehaviour
 
     private void GenerateDungeon()
     {
+        rooms = new List<RoomsTreeNode>();
+
+        objectPositionPairs = new Dictionary<Transform, Vector3>();
+
         MapCharValue[,] map = new MapCharValue[rowsCount, columnsCount];
         
         for (int i = 0; i < map.GetLength(0); i++)
@@ -36,8 +49,91 @@ public class DungeonGenerator : MonoBehaviour
 
         CreateFloor(map);
 
-        dungeonMap = GetComponent<DungeonMap>();
-        dungeonMap.Initialize(map, root, floorGridPrefab.transform.localScale.x);
+        rooms.Sort(Compare);
+
+        roomsCounter = rooms.Count / 2;
+
+        SpawnPlayer(map);
+
+        int enemiesCount = Random.Range(minEnemiesCount, maxEnemiesCount);
+        SpawnEnemies(map, enemiesCount);
+    }
+
+    //private MapChar GetMapChar(int idx0, int idx1)
+    //{
+    //    return map[idx0, idx1].Value;
+    //}
+
+    //public void Move(Transform transform, Vector3 direction, IMapObject mapObject)
+    //{
+    //    Vector3 start = obs[transform.name];
+    //    Vector3 end = start + direction;
+
+    //    int idx0 = (int)end.x;
+    //    int idx1 = (int)end.z;
+
+    //    if (GetMapChar(idx0, idx1) != MapChar.Empty)
+    //        return;
+
+    //    obs[transform.name] = end;
+
+    //    map[(int)start.x, (int)start.z].Value = MapChar.Empty;
+    //    map[idx0, idx1].Value = mapObject.MapChar;
+
+    //    mapObject.Move(new Vector3(idx0 * gridsOffset, transform.localScale.y / 2, idx1 * gridsOffset));
+    //}
+
+    private void SpawnEnemies(MapCharValue[,] map, int enemiesCount)
+    {
+        if (objectPositionPairs.ContainsKey(transform))
+            return;
+
+        for (int i = 0; i < enemiesCount; i++)
+        {
+            if (roomsCounter == rooms.Count)
+                roomsCounter = rooms.Count / 2;
+
+            RoomsTreeNode room = rooms[roomsCounter];
+
+            IndexOf(map, room.Value[Random.Range(1, room.Value.GetLength(0)),
+                                    Random.Range(1, room.Value.GetLength(1))], out int idx0, out int idx1);
+
+            GameObject enemy = Instantiate(enemyPrefab);
+
+            Spawn(enemy.transform, map, MapChar.Enemy, idx0, idx1);
+
+            roomsCounter++;
+        }
+    }
+
+    private void SpawnPlayer(MapCharValue[,] map)
+    {
+        if (objectPositionPairs.ContainsKey(transform))
+            return;
+
+        RoomsTreeNode room = rooms[0];
+
+        IndexOf(map, room.Value[room.Value.GetLength(0) / 2, room.Value.GetLength(1) / 2], out int idx0, out int idx1);
+
+        Spawn(player.transform, map, MapChar.Player, idx0, idx1);
+    }
+
+    private void Spawn(Transform transform, MapCharValue[,] map, MapChar mapChar, int idx0, int idx1)
+    {
+        map[idx0, idx1].Value = mapChar;
+
+        objectPositionPairs.Add(transform, new Vector3(idx0, 0, idx1));
+
+        transform.SetParent(this.transform);
+        transform.localPosition = new Vector3(idx0 * floorGridPrefab.transform.localScale.x, transform.localScale.y / 2, 
+                                              idx1 * floorGridPrefab.transform.localScale.z);
+    }
+
+    public int Compare(RoomsTreeNode x, RoomsTreeNode y)
+    {
+        if (x.Value.Length == y.Value.Length) return 0;
+        else if (x.Value.Length < y.Value.Length) return -1;
+        else return 1;
     }
 
     private void CreateWalls(MapCharValue[,] map)
@@ -85,7 +181,11 @@ public class DungeonGenerator : MonoBehaviour
                        Random.Range(minSectorsHeight, map.GetLength(0) - minSectorsHeight);
 
         if (!MatrixHelper<MapCharValue>.IsSliceable(map, matrixSlice, position, minSectorsHeight, minSectorsWidth))
+        {
+            rooms.Add(root);
+
             return;
+        }
             
         MatrixHelper<MapCharValue>.Slice(map, matrixSlice, position, out MapCharValue[,] firstSlice, out MapCharValue[,] secondSlice);
 
