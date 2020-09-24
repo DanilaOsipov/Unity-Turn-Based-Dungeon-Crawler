@@ -233,7 +233,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b03489c38850d44480f8564f6f60025, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonMap: {fileID: 270779198}
 --- !u!114 &65498286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +296,10 @@ MonoBehaviour:
   minSectorsWidth: 7
   floorGridPrefab: {fileID: 1869475762231524080, guid: 581d37e5dfcb10244892fe44aa3b19b6, type: 3}
   wallCubePrefab: {fileID: 4276255790471060434, guid: 4ba759487c10e5449954b396593e1b1d, type: 3}
+  player: {fileID: 65498280}
+  enemyPrefab: {fileID: 8524653079713694790, guid: 06351996793188b43837c95015c747e3, type: 3}
+  minEnemiesCount: 10
+  maxEnemiesCount: 15
 --- !u!114 &270779198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,51 +487,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90.44299, y: -89.91199, z: 0.0019989014}
---- !u!1 &2040761224
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2040761225}
-  - component: {fileID: 2040761226}
-  m_Layer: 0
-  m_Name: AIController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2040761225
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2040761224}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 45.526222, y: -5.194046, z: 70.3701}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2040761226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2040761224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0106bd602b19a7745af6e2cb59f13e33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8524653079713694790, guid: 06351996793188b43837c95015c747e3, type: 3}
-  minEnemiesCount: 10
-  maxEnemiesCount: 15
-  dungeonMap: {fileID: 270779198}
-  enemiesTarget: {fileID: 65498284}

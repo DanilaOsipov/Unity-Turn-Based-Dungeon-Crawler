@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    [SerializeField] private int rowsCount;
-    [SerializeField] private int columnsCount;
-    [SerializeField] private int minSectorsHeight;
-    [SerializeField] private int minSectorsWidth;
+    [SerializeField] private int rowsCount = 40;
+    [SerializeField] private int columnsCount = 40;
+    [SerializeField] private int minSectorsHeight = 7;
+    [SerializeField] private int minSectorsWidth = 7;
 
     [SerializeField] private GameObject floorGridPrefab;
     [SerializeField] private GameObject wallCubePrefab;
@@ -57,6 +57,8 @@ public class DungeonGenerator : MonoBehaviour
 
         int enemiesCount = Random.Range(minEnemiesCount, maxEnemiesCount);
         SpawnEnemies(map, enemiesCount);
+
+        new Pathfinding(map, objectPositionPairs);
     }
 
     //private MapChar GetMapChar(int idx0, int idx1)
