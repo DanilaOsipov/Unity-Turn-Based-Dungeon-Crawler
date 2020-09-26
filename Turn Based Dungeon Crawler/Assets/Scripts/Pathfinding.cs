@@ -15,6 +15,19 @@ public class Pathfinding
     private Dictionary<Transform, Vector3> objectPositionPairs;
     private PathNode[,] pathNodes;
 
+    public void UpdatePosition(Transform transform, MapChar mapChar, Vector3 position)
+    {
+        Vector3 vector = objectPositionPairs[transform];
+        int idx0 = (int)vector.x, idx1 = (int)vector.z;
+        map[idx0, idx1].Value = MapChar.Empty;
+
+        objectPositionPairs[transform] = position;
+        idx0 = (int)position.x;
+        idx1 = (int)position.z;
+
+        map[idx0, idx1].Value = mapChar;
+    }
+
     public Pathfinding(MapCharValue[,] map, Dictionary<Transform, Vector3> objectPositionPairs)
     {
         Instance = this;
