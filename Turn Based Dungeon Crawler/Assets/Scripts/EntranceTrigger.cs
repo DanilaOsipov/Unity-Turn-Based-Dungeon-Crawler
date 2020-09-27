@@ -11,7 +11,6 @@ public class EntranceTrigger : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             Messenger<int>.Broadcast(GameEvent.PLAYER_ENTERED_THE_ROOM, roomId);
-            Debug.Log("entered " + roomId);
         }
     }
 }

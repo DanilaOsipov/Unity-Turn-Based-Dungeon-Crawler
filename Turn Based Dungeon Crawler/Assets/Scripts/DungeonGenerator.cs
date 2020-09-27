@@ -86,9 +86,14 @@ public class DungeonGenerator : MonoBehaviour
             
             EnemyMovement enemyMovement = enemy.GetComponent<EnemyMovement>();
             if (enemyMovement != null)
+            {
                 enemyMovement.startRoomId = roomsCounter;
+                enemyMovement.target = player;
+            }
 
             Spawn(enemy.transform, map, MapChar.Enemy, idx0, idx1);
+
+            CreateEntranceTriggers(room, map);
 
             foreach (var et in room.EntranceTriggers)
             {
@@ -96,6 +101,37 @@ public class DungeonGenerator : MonoBehaviour
             }
 
             roomsCounter++;
+        }
+    }
+
+    private void CreateEntranceTriggers(RoomsTreeNode room, MapCharValue[,] map)
+    {
+        for (int i = 1; i < room.Value.GetLength(0) - 1; i++)
+        {
+            if (room.Value[i, 0].Value == MapChar.Empty)
+            {
+                IndexOf(map, room.Value[i, 0], out int idx0, out int idx1);
+                room.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
+            }
+            else if (room.Value[i, room.Value.GetLength(1) - 1].Value == MapChar.Empty)
+            {
+                IndexOf(map, room.Value[i, room.Value.GetLength(1) - 1], out int idx0, out int idx1);
+                room.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
+            }
+        }
+
+        for (int j = 1; j < room.Value.GetLength(1) - 1; j++)
+        {
+            if (room.Value[0, j].Value == MapChar.Empty)
+            {
+                IndexOf(map, room.Value[0, j], out int idx0, out int idx1);
+                room.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
+            }
+            else if (room.Value[room.Value.GetLength(0) - 1, j].Value == MapChar.Empty)
+            {
+                IndexOf(map, room.Value[room.Value.GetLength(0) - 1, j], out int idx0, out int idx1);
+                room.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
+            }
         }
     }
 
@@ -222,12 +258,6 @@ public class DungeonGenerator : MonoBehaviour
                 from.Value[position, from.Value.GetLength(1) - 1].Value = default;
                 to.Value[position, 0].Value = default;
 
-                IndexOf(map, from.Value[position, from.Value.GetLength(1) - 1], out int idx0, out int idx1);
-                from.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
-                IndexOf(map, to.Value[position, 0], out idx0, out idx1);
-                to.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
                 from.Value[position, from.Value.GetLength(1) - 2].Value = default;
                 to.Value[position, 1].Value = default;
             }
@@ -235,12 +265,6 @@ public class DungeonGenerator : MonoBehaviour
             {
                 to.Value[position, from.Value.GetLength(1) - 1].Value = default;
                 from.Value[position, 0].Value = default;
-
-                IndexOf(map, to.Value[position, from.Value.GetLength(1) - 1], out int idx0, out int idx1);
-                to.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
-                IndexOf(map, from.Value[position, 0], out idx0, out idx1);
-                from.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
 
                 to.Value[position, from.Value.GetLength(1) - 2].Value = default;
                 from.Value[position, 1].Value = default;
@@ -255,12 +279,6 @@ public class DungeonGenerator : MonoBehaviour
                 from.Value[from.Value.GetLength(0) - 1, position].Value = default;
                 to.Value[0, position].Value = default;
 
-                IndexOf(map, from.Value[from.Value.GetLength(0) - 1, position], out int idx0, out int idx1);
-                from.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
-                IndexOf(map, to.Value[0, position], out idx0, out idx1);
-                to.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
                 from.Value[from.Value.GetLength(0) - 2, position].Value = default;
                 to.Value[1, position].Value = default;
             }
@@ -268,12 +286,6 @@ public class DungeonGenerator : MonoBehaviour
             {
                 to.Value[from.Value.GetLength(0) - 1, position].Value = default;
                 from.Value[0, position].Value = default;
-
-                IndexOf(map, to.Value[from.Value.GetLength(0) - 1, position], out int idx0, out int idx1);
-                to.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
-
-                IndexOf(map, from.Value[0, position], out idx0, out idx1);
-                from.EntranceTriggers.Add(CreateEntranceTrigger(idx0, idx1));
 
                 to.Value[from.Value.GetLength(0) - 2, position].Value = default;
                 from.Value[1, position].Value = default;

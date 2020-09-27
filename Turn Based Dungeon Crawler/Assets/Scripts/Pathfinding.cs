@@ -15,7 +15,7 @@ public class Pathfinding
     private Dictionary<Transform, Vector3> objectPositionPairs;
     private PathNode[,] pathNodes;
 
-    public void UpdatePosition(Transform transform, MapChar mapChar, Vector3 position)
+    public void UpdateObjectOnMap(Transform transform, MapChar mapChar, Vector3 position)
     {
         Vector3 vector = objectPositionPairs[transform];
         int idx0 = (int)vector.x, idx1 = (int)vector.z;
@@ -41,6 +41,16 @@ public class Pathfinding
                 pathNodes[i, j] = new PathNode(new Vector3(i, 0, j));
             }
         }
+    }
+
+    public bool CanMove(Transform transform, Vector3 direction, out Vector3 movement)
+    {
+        Vector3 vector = objectPositionPairs[transform] + direction;
+        int idx0 = (int)vector.x, idx1 = (int)vector.z;
+
+        movement = new Vector3(idx0, 0, idx1);
+
+        return map[idx0, idx1].Value == MapChar.Empty;
     }
 
     public List<PathNode> FindPath(Transform from, Transform to)
@@ -109,22 +119,22 @@ public class Pathfinding
 
         if (idx0 + 1 >= 0 && idx1 >= 0 &&
             (map[idx0 + 1, idx1].Value == MapChar.Empty ||
-            map[idx0 + 1, idx1].Value == MapChar.Enemy))
+            map[idx0 + 1, idx1].Value == MapChar.Player))
             res.Add(pathNodes[idx0 + 1, idx1]);
 
         if (idx0 - 1 >= 0 && idx1 >= 0 &&
             (map[idx0 - 1, idx1].Value == MapChar.Empty ||
-            map[idx0 - 1, idx1].Value == MapChar.Enemy))
+            map[idx0 - 1, idx1].Value == MapChar.Player))
             res.Add(pathNodes[idx0 - 1, idx1]);
 
         if (idx0 >= 0 && idx1 + 1 >= 0 &&
             (map[idx0, idx1 + 1].Value == MapChar.Empty ||
-            map[idx0, idx1 + 1].Value == MapChar.Enemy))
+            map[idx0, idx1 + 1].Value == MapChar.Player))
             res.Add(pathNodes[idx0, idx1 + 1]);
 
         if (idx0 >= 0 && idx1 - 1 >= 0 &&
             (map[idx0, idx1 - 1].Value == MapChar.Empty ||
-            map[idx0, idx1 - 1].Value == MapChar.Enemy))
+            map[idx0, idx1 - 1].Value == MapChar.Player))
             res.Add(pathNodes[idx0, idx1 - 1]);
 
         return res;
