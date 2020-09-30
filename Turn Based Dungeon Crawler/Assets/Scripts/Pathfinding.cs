@@ -15,6 +15,13 @@ public class Pathfinding
     private Dictionary<Transform, Vector3> objectPositionPairs;
     private PathNode[,] pathNodes;
 
+    public void RemoveObjectFromMap(Transform transform)
+    {
+        Vector3 vector = objectPositionPairs[transform];
+        int idx0 = (int)vector.x, idx1 = (int)vector.z;
+        map[idx0, idx1].Value = MapChar.Empty;
+    }
+
     public void UpdateObjectOnMap(Transform transform, MapChar mapChar, Vector3 position)
     {
         Vector3 vector = objectPositionPairs[transform];
@@ -46,7 +53,7 @@ public class Pathfinding
     public bool CanMove(Transform transform, Vector3 direction, out Vector3 movement)
     {
         Vector3 vector = objectPositionPairs[transform] + direction;
-        int idx0 = (int)vector.x, idx1 = (int)vector.z;
+        int idx0 = Mathf.RoundToInt(vector.x), idx1 = Mathf.RoundToInt(vector.z);
 
         movement = new Vector3(idx0, 0, idx1);
 

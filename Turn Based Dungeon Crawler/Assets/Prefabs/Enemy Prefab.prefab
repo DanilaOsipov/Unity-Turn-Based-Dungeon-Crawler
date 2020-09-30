@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 8344976228009485648}
   - component: {fileID: 7922156818925616539}
   - component: {fileID: 4267211276111199101}
+  - component: {fileID: 6961568015979057558}
+  - component: {fileID: 3633711884034083114}
   m_Layer: 0
   m_Name: Enemy Prefab
   m_TagString: Untagged
@@ -109,4 +111,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d980cd19e526747989d42aa9feba8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 6
+  target: {fileID: 0}
   startRoomId: 0
+--- !u!114 &6961568015979057558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8524653079713694790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a74747492474cf42b8c588f14161f79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 20
+  damage: 5
+--- !u!114 &3633711884034083114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8524653079713694790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06bb7197bff68cb45a2dab64125011a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

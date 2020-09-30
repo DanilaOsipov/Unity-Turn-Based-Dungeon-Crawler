@@ -65,6 +65,8 @@ public class DungeonGenerator : MonoBehaviour
         SpawnEnemies(map, enemiesCount);
 
         new Pathfinding(map, objectPositionPairs);
+
+        Messenger<int>.AddListener(GameEvent.PLAYER_ENTERED_THE_ROOM, RemoveEntranceTriggers);
     }
 
     private void SpawnEnemies(MapCharValue[,] map, int enemiesCount)
@@ -82,26 +84,53 @@ public class DungeonGenerator : MonoBehaviour
             IndexOf(map, room.Value[Random.Range(1, room.Value.GetLength(0) - 1),
                                     Random.Range(1, room.Value.GetLength(1) - 1)], out int idx0, out int idx1);
             
-            GameObject enemy = Instantiate(enemyPrefab);
-            
-            EnemyMovement enemyMovement = enemy.GetComponent<EnemyMovement>();
-            if (enemyMovement != null)
+            GameObject obj = Instantiate(enemyPrefab);
+
+            Enemy enemy = obj.GetComponent<Enemy>();
+            if (enemy != null)
             {
-                enemyMovement.startRoomId = roomsCounter;
-                enemyMovement.target = player;
+                enemy.startRoomId = roomsCounter;
+                enemy.target = player;
             }
 
-            Spawn(enemy.transform, map, MapChar.Enemy, idx0, idx1);
+            Spawn(obj.transform, map, MapChar.Enemy, idx0, idx1);
 
-            CreateEntranceTriggers(room, map);
-
-            foreach (var et in room.EntranceTriggers)
+            if (room.EntranceTriggers.Count == 0)
             {
-                if (et != null) et.roomId = roomsCounter;
+                CreateEntranceTriggers(room, map);
+
+                foreach (var et in room.EntranceTriggers)
+                {
+                    if (et != null) et.roomId = roomsCounter;
+                }
             }
 
             roomsCounter++;
         }
+    }
+
+    private void RemoveEntranceTriggers(int roomId)
+    {
+        List<EntranceTrigger> entranceTriggers = null;
+
+        foreach (var room in rooms)
+        {
+            if (room.EntranceTriggers.Count > 0)
+            {
+                if (room.EntranceTriggers[0] != null && room.EntranceTriggers[0].roomId == roomId)
+                {
+                    entranceTriggers = room.EntranceTriggers;
+                    break;
+                }
+            }
+        }
+
+        foreach (var et in entranceTriggers)
+        {
+            Destroy(et.gameObject);
+        }
+
+        entranceTriggers = null;
     }
 
     private void CreateEntranceTriggers(RoomsTreeNode room, MapCharValue[,] map)
