@@ -19,6 +19,8 @@ public class DungeonGenerator : MonoBehaviour
 
     [SerializeField] private GameObject entranceTriggerPrefab;
 
+    [SerializeField] private GameObject healingPrefab;
+
     private int roomsCounter;
     private List<RoomsTreeNode> rooms;
 
@@ -67,6 +69,24 @@ public class DungeonGenerator : MonoBehaviour
         new Pathfinding(map, objectPositionPairs);
 
         Messenger<int>.AddListener(GameEvent.PLAYER_ENTERED_THE_ROOM, RemoveEntranceTriggers);
+
+        SpawnHealings(map);
+    }
+
+    private void SpawnHealings(MapCharValue[,] map)
+    {
+        for (int i = 1; i < rooms.Count / 2; i++)
+        {
+            RoomsTreeNode room = rooms[i];
+
+            GameObject healing = Instantiate(healingPrefab);
+
+            IndexOf(map, room.Value[room.Value.GetLength(0) / 2, room.Value.GetLength(1) / 2], out int idx0, out int idx1);
+
+            healing.transform.SetParent(transform);
+            healing.transform.localPosition = new Vector3(idx0 * floorGridPrefab.transform.localScale.x, transform.localScale.y / 2,
+                                                          idx1 * floorGridPrefab.transform.localScale.z);
+        }
     }
 
     private void SpawnEnemies(MapCharValue[,] map, int enemiesCount)

@@ -26,6 +26,14 @@ public class PlayerCombat : MonoBehaviour
         else callback();
     }
 
+    public void Heal(int hp)
+    {
+        health += hp;
+
+        if (health > maxHealth)
+            health = maxHealth;
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;

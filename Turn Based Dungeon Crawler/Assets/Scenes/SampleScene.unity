@@ -317,6 +317,7 @@ MonoBehaviour:
   minEnemiesCount: 10
   maxEnemiesCount: 15
   entranceTriggerPrefab: {fileID: 3947203249309412877, guid: 05a58a71ee12da44b872a27d5ddc065e, type: 3}
+  healingPrefab: {fileID: 5346114992039389162, guid: 9ff6778ae5a4d714c82baea9d13da758, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
