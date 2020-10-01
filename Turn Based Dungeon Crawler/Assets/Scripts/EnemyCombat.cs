@@ -42,6 +42,9 @@ public class EnemyCombat : MonoBehaviour
     {
         Pathfinding.Instance.RemoveObjectFromMap(transform);
 
+        DungeonGenerator.EnemiesCount--;
+
+        Debug.Log(DungeonGenerator.EnemiesCount);
 
         //Debug.Log(BattleSystem.Enemies.Count);
 

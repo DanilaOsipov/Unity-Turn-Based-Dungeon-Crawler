@@ -11,11 +11,6 @@ public class RoomsTreeNode
     public RoomsTreeNode Parent { get; set; }
     public RoomsTreeNode Right { get; set; }
     public RoomsTreeNode Left { get; set; }
-    public List<EntranceTrigger> EntranceTriggers { get; } 
-
-    public RoomsTreeNode()
-    {
-        EntranceTriggers = new List<EntranceTrigger>();
-    }
+    public List<EntranceTrigger> EntranceTriggers { get; set; } 
 }
 

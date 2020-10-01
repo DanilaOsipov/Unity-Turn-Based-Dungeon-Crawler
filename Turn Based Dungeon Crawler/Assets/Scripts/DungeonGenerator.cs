@@ -21,6 +21,10 @@ public class DungeonGenerator : MonoBehaviour
 
     [SerializeField] private GameObject healingPrefab;
 
+    [SerializeField] private GameObject exitCubePrefab;
+
+    public static int EnemiesCount { get; set; }
+
     private int roomsCounter;
     private List<RoomsTreeNode> rooms;
 
@@ -53,8 +57,6 @@ public class DungeonGenerator : MonoBehaviour
 
         CreateEntrances(map, root);
 
-        CreateWalls(map);
-
         CreateFloor(map);
 
         rooms.Sort(Compare);
@@ -63,14 +65,77 @@ public class DungeonGenerator : MonoBehaviour
 
         SpawnPlayer(map);
 
-        int enemiesCount = Random.Range(minEnemiesCount, maxEnemiesCount);
-        SpawnEnemies(map, enemiesCount);
+        CreateExit(map);
+
+        EnemiesCount = Random.Range(minEnemiesCount, maxEnemiesCount);
+        SpawnEnemies(map, EnemiesCount);
 
         new Pathfinding(map, objectPositionPairs);
 
         Messenger<int>.AddListener(GameEvent.PLAYER_ENTERED_THE_ROOM, RemoveEntranceTriggers);
 
         SpawnHealings(map);
+
+        CreateWalls(map);
+    }
+
+    private void OnDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.PLAYER_ENTERED_THE_ROOM, RemoveEntranceTriggers);
+    }
+
+    private void CreateExit(MapCharValue[,] map)
+    {
+        Vector3 vector = objectPositionPairs[player.transform];
+        int idx0 = (int)vector.x, idx1 = (int)vector.z;
+
+        int max = minSectorsHeight > minSectorsWidth ? minSectorsWidth : minSectorsHeight;
+        int idx = Random.Range(1, max / 2);
+
+        int width = map.GetLength(1) - 1;
+        int height = map.GetLength(0) - 1;
+
+        GameObject exit = Instantiate(exitCubePrefab);
+        exit.transform.SetParent(transform);
+
+        if (idx0 > map.GetLength(0) / 2)
+        {
+            if (idx1 > map.GetLength(1) / 2)
+            {
+                exit.transform.localPosition = new Vector3(idx * exit.transform.localScale.x,
+                                                           exit.transform.localScale.y / 2,
+                                                           0);
+
+                map[idx, 0].Value = MapChar.Exit;
+            }
+            else
+            {
+                map[0, width - idx].Value = MapChar.Exit;
+
+                exit.transform.localPosition = new Vector3(0,
+                                                           exit.transform.localScale.y / 2,
+                                                           (width - idx) * exit.transform.localScale.x);
+            }
+        }
+        else
+        {
+            if (idx1 > map.GetLength(1) / 2)
+            {
+                map[height - idx, 0].Value = MapChar.Exit;
+
+                exit.transform.localPosition = new Vector3((height - idx) * exit.transform.localScale.x,
+                                                           exit.transform.localScale.y / 2,
+                                                           0);
+            }
+            else
+            {
+                map[height, width - idx].Value = MapChar.Exit;
+
+                exit.transform.localPosition = new Vector3(height * exit.transform.localScale.x,
+                                                           exit.transform.localScale.y / 2,
+                                                           (width - idx) * exit.transform.localScale.x);
+            }
+        }
     }
 
     private void SpawnHealings(MapCharValue[,] map)
@@ -115,7 +180,7 @@ public class DungeonGenerator : MonoBehaviour
 
             Spawn(obj.transform, map, MapChar.Enemy, idx0, idx1);
 
-            if (room.EntranceTriggers.Count == 0)
+            if (room.EntranceTriggers == null)
             {
                 CreateEntranceTriggers(room, map);
 
@@ -133,14 +198,17 @@ public class DungeonGenerator : MonoBehaviour
     {
         List<EntranceTrigger> entranceTriggers = null;
 
-        foreach (var room in rooms)
+        for (int i = rooms.Count / 2; i < rooms.Count; i++)
         {
-            if (room.EntranceTriggers.Count > 0)
+            if (rooms[i].EntranceTriggers != null)
             {
-                if (room.EntranceTriggers[0] != null && room.EntranceTriggers[0].roomId == roomId)
+                if (rooms[i].EntranceTriggers.Count > 0)
                 {
-                    entranceTriggers = room.EntranceTriggers;
-                    break;
+                    if (rooms[i].EntranceTriggers[0] != null && rooms[i].EntranceTriggers[0].roomId == roomId)
+                    {
+                        entranceTriggers = rooms[i].EntranceTriggers;
+                        break;
+                    }
                 }
             }
         }
@@ -155,6 +223,8 @@ public class DungeonGenerator : MonoBehaviour
 
     private void CreateEntranceTriggers(RoomsTreeNode room, MapCharValue[,] map)
     {
+        room.EntranceTriggers = new List<EntranceTrigger>();
+
         for (int i = 1; i < room.Value.GetLength(0) - 1; i++)
         {
             if (room.Value[i, 0].Value == MapChar.Empty)

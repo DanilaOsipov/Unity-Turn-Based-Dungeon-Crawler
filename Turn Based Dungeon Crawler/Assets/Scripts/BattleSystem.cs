@@ -17,6 +17,11 @@ public class BattleSystem : MonoBehaviour
         Enemies = new List<Enemy>();
     }
 
+    private void OnDestroy()
+    {
+        Messenger.RemoveListener(GameEvent.ENEMY_TURN, OnEnemyTurn);
+    }
+
     private Enemy GetClosestEnemy()
     {
         //Debug.Log(BattleSystem.Enemies.Count);

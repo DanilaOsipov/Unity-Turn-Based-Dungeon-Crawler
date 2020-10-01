@@ -20,6 +20,11 @@ public class Player : MonoBehaviour
         Messenger.AddListener(GameEvent.PLAYER_TURN, OnPlayerTurn);
     }
 
+    private void OnDestroy()
+    {
+        Messenger.RemoveListener(GameEvent.PLAYER_TURN, OnPlayerTurn);
+    }
+
     private void OnPlayerTurn()
     {
         Debug.Log("player turn");
@@ -59,9 +64,31 @@ public class Player : MonoBehaviour
             }
             else if (Input.GetButtonDown("Fire1"))
             {
-                combat.Attack(OnPlayerTurn);
+                if (combat.CanAttack())
+                {
+                    combat.Attack(OnPlayerTurn);
+                }
+                else if (CanExit(out Exit exit))
+                {
+                    exit.ExitLevel();
+                }
+                else canMove = true;
             }
             else canMove = true;
         }
+    }
+
+    private bool CanExit(out Exit exit)
+    {
+        exit = null;
+
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, DungeonGenerator.MovementOffset))
+        {
+            exit = hit.transform.GetComponent<Exit>();
+
+            return exit != null && DungeonGenerator.EnemiesCount == 0;
+        }
+
+        return false;
     }
 }

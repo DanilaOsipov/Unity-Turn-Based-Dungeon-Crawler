@@ -21,6 +21,11 @@ public class Enemy : MonoBehaviour
         Messenger<int>.AddListener(GameEvent.PLAYER_ENTERED_THE_ROOM, OnPlayerEnteredTheRoom);
     }
 
+    private void OnDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.PLAYER_ENTERED_THE_ROOM, OnPlayerEnteredTheRoom);
+    }
+
     private void OnPlayerEnteredTheRoom(int roomId)
     {
         if (startRoomId == roomId)

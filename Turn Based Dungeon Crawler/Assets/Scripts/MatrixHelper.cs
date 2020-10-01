@@ -76,7 +76,5 @@ public static class MatrixHelper<T>
         return matrix.GetLength(0) - positionY >= sectorHeight &&
                matrix.GetLength(1) - positionX >= sectorWidth;
     }
-
-
 }
 

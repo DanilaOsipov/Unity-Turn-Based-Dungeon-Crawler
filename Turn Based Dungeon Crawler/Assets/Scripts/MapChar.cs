@@ -9,6 +9,7 @@ public enum MapChar
     Empty = '\0',
     Wall = 'w',
     Player = 'p',
-    Enemy = 'e'
+    Enemy = 'e',
+    Exit = 'd'
 }
 

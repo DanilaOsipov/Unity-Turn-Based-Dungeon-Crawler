@@ -54,6 +54,16 @@ public class PlayerCombat : MonoBehaviour
         health = maxHealth;
     }
 
+    public bool CanAttack()
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, DungeonGenerator.MovementOffset))
+        {
+            return hit.transform.GetComponent<EnemyCombat>() != null;
+        }
+
+        return false;
+    }
+
     private bool CanAttack(out EnemyCombat enemyCombat)
     {
         enemyCombat = null;
