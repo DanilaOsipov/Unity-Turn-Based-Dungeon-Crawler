@@ -271,9 +271,17 @@ public class DungeonGenerator : MonoBehaviour
         map[idx0, idx1].Value = mapChar;
 
         objectPositionPairs.Add(transform, new Vector3(idx0, 0, idx1));
+        
+        float yPos = 0;
+
+        Collider collider = transform.GetComponent<Collider>();
+        if (collider != null)
+        {
+            yPos = collider.bounds.size.y / 2;
+        }
 
         transform.SetParent(this.transform);
-        transform.localPosition = new Vector3(idx0 * floorGridPrefab.transform.localScale.x, transform.localScale.y / 2, 
+        transform.localPosition = new Vector3(idx0 * floorGridPrefab.transform.localScale.x, yPos, 
                                               idx1 * floorGridPrefab.transform.localScale.z);
     }
 

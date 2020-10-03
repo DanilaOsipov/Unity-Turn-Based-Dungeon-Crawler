@@ -8,9 +8,16 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float speed = 6.0f;
     [SerializeField] private float rotationSpeed = 6.0f;
 
+    private EnemyAnimation enemyAnimation;
+
     public GameObject target;
     private bool canMove;
     private MapChar mapChar = MapChar.Enemy;
+
+    private void Start()
+    {
+        enemyAnimation = GetComponent<EnemyAnimation>();
+    }
 
     public void Chase()
     {
@@ -61,9 +68,11 @@ public class EnemyMovement : MonoBehaviour
 
     private IEnumerator RotateInternal(Quaternion targetRotation)
     {
+        Quaternion startRotation = transform.rotation;
+
         for (float t = 0; t < 1; t += rotationSpeed * Time.deltaTime)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, t);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
 
             yield return null;
         }
@@ -75,9 +84,11 @@ public class EnemyMovement : MonoBehaviour
 
     private IEnumerator RotateAndMoveInternal(Quaternion targetRotation, Vector3 endPos, Vector3 mapPos)
     {
+        Quaternion startRotation = transform.rotation;
+
         for (float t = 0; t < 1; t += rotationSpeed * Time.deltaTime)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, t);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
 
             yield return null;
         }
@@ -96,13 +107,24 @@ public class EnemyMovement : MonoBehaviour
 
     private IEnumerator MoveInternal(Vector3 to)
     {
-        for (float t = 0; t < 1; t += speed * Time.deltaTime)
+        enemyAnimation.StartWalking(() => { });
+
+        float startTime = Time.time;
+        float length = Vector3.Distance(transform.localPosition, to);
+        Vector3 from = transform.localPosition;
+
+        float t = 0;
+
+        while (t < 1)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, to, t);
+            float distCovered = (Time.time - startTime) * speed;
+            t = distCovered / length;
+
+            transform.localPosition = Vector3.Lerp(from, to, t);
 
             yield return null;
         }
 
-        Messenger.Broadcast(GameEvent.PLAYER_TURN);
+        enemyAnimation.StopWalking(() => { Messenger.Broadcast(GameEvent.PLAYER_TURN); });
     }
 }

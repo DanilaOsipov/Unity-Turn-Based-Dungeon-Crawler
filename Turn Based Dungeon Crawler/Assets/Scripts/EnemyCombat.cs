@@ -8,11 +8,15 @@ public class EnemyCombat : MonoBehaviour
     [SerializeField] private int maxHealth = 20;
     [SerializeField] private int damage = 5;
 
+    private EnemyAnimation enemyAnimation;
+
     private int health;
 
     private void Start()
     {
         health = maxHealth;
+
+        enemyAnimation = GetComponent<EnemyAnimation>();
     }
 
     public void Attack()
@@ -21,7 +25,7 @@ public class EnemyCombat : MonoBehaviour
         {
             Debug.Log("enemy atk");
 
-            playerCombat.TakeDamage(damage);
+            enemyAnimation.Attack(() => { playerCombat.TakeDamage(damage); });
         }
     }
 
@@ -33,9 +37,12 @@ public class EnemyCombat : MonoBehaviour
 
         if (health <= 0)
         {
-            Die();
+            enemyAnimation.Die(() => { Die(); });
         }
-        else Messenger.Broadcast(GameEvent.ENEMY_TURN);
+        else
+        {
+            enemyAnimation.TakeDamage(() => { Messenger.Broadcast(GameEvent.ENEMY_TURN); });
+        }
     }
 
     private void Die()
