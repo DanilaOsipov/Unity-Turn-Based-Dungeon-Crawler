@@ -954,7 +954,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startWalkingSpeed: 8
   stopWalkingSpeed: 8
-  startTurningAroundSpeed: 6
 --- !u!1 &4566918376610389144
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,6 +1654,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4242336912580530350}
   - component: {fileID: 3394988166116308146}
+  - component: {fileID: 5385030878848588657}
   m_Layer: 0
   m_Name: Skeleton Mesh
   m_TagString: Untagged
@@ -1697,6 +1697,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5385030878848588657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074665478078297596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4140a955b717114bbcbe9a19dcde17d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 0}
 --- !u!1 &8167073077728693505
 GameObject:
   m_ObjectHideFlags: 0
