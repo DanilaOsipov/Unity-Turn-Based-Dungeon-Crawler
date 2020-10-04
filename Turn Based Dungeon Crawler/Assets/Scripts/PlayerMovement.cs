@@ -10,6 +10,13 @@ public class PlayerMovement : MonoBehaviour
 
     private MapChar MapChar => MapChar.Player;
 
+    private CameraBob cameraBob;
+
+    private void Start()
+    {
+        cameraBob = GetComponentInChildren<CameraBob>();
+    }
+
     public void MoveRight(Action callback)
     {
         Move(transform.right, callback);
@@ -42,9 +49,11 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator RotateInternal(Quaternion targetRotation, Action callback)
     {
+        Quaternion startRotation = transform.rotation;
+
         for (float t = 0; t < 1; t += rotationSpeed * Time.deltaTime)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, t);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
 
             yield return null;
         }
@@ -73,12 +82,18 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator MoveInternal(Vector3 to, Action callback)
     {
+        Vector3 from = transform.localPosition;
+        
+        cameraBob.SetWalkingSpeed();
+
         for (float t = 0; t < 1; t += movementSpeed * Time.deltaTime)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, to, t);
+            transform.localPosition = Vector3.Lerp(from, to, t);
 
             yield return null;
         }
+
+        cameraBob.SetIdleSpeed();
 
         if (!BattleSystem.BattleInProcess) callback();
         else Messenger.Broadcast(GameEvent.ENEMY_TURN);

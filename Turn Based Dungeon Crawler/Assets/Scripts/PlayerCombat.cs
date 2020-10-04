@@ -8,11 +8,17 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int damage = 5;
 
+    CameraShake cameraShake;
+    CameraBob cameraBob;
+
     private int health;
 
     private void Start()
     {
         health = maxHealth;
+
+        cameraBob = GetComponentInChildren<CameraBob>();
+        cameraShake = GetComponentInChildren<CameraShake>();
     }
 
     public void Attack(Action callback)
@@ -44,7 +50,21 @@ public class PlayerCombat : MonoBehaviour
         {
             Die();
         }
-        else Messenger.Broadcast(GameEvent.PLAYER_TURN);
+        else
+        {
+            cameraBob.ResetSpeed();
+
+            Vector2 direction = UnityEngine.Random.insideUnitCircle;
+            //Vector2 direction = -Vector2.one;
+            cameraShake.ShakeRotateCamera(direction, () => 
+            {
+                cameraBob.SetIdleSpeed();
+
+                Messenger.Broadcast(GameEvent.PLAYER_TURN);
+            });
+
+            //Messenger.Broadcast(GameEvent.PLAYER_TURN);
+        }
     }
 
     private void Die()
