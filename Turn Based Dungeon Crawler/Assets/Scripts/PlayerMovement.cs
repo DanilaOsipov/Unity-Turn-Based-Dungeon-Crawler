@@ -11,10 +11,12 @@ public class PlayerMovement : MonoBehaviour
     private MapChar MapChar => MapChar.Player;
 
     private CameraBob cameraBob;
+    private PlayerSound playerSound;
 
     private void Start()
     {
         cameraBob = GetComponentInChildren<CameraBob>();
+        playerSound = GetComponentInChildren<PlayerSound>();
     }
 
     public void MoveRight(Action callback)
@@ -22,9 +24,19 @@ public class PlayerMovement : MonoBehaviour
         Move(transform.right, callback);
     }
 
+    public bool CanMoveRight()
+    {
+        return Pathfinding.Instance.CanMove(transform, transform.right, out Vector3 movement);
+    }
+
     public void MoveLeft(Action callback)
     {
         Move(-transform.right, callback);
+    }
+
+    public bool CanMoveLeft()
+    {
+        return Pathfinding.Instance.CanMove(transform, -transform.right, out Vector3 movement);
     }
 
     public void MoveForward(Action callback)
@@ -32,9 +44,19 @@ public class PlayerMovement : MonoBehaviour
         Move(transform.forward, callback);
     }
 
+    public bool CanMoveForward()
+    {
+        return Pathfinding.Instance.CanMove(transform, transform.forward, out Vector3 movement);
+    }
+
     public void MoveBack(Action callback)
     {
         Move(-transform.forward, callback);
+    }
+
+    public bool CanMoveBack()
+    {
+        return Pathfinding.Instance.CanMove(transform, -transform.forward, out Vector3 movement);
     }
 
     public void RotateLeft(Action callback)
@@ -85,6 +107,8 @@ public class PlayerMovement : MonoBehaviour
         Vector3 from = transform.localPosition;
         
         cameraBob.SetWalkingSpeed();
+
+        playerSound.Step(() => { });
 
         for (float t = 0; t < 1; t += movementSpeed * Time.deltaTime)
         {

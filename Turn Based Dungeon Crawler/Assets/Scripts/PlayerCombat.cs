@@ -8,19 +8,28 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int damage = 5;
 
+    private PlayerSound playerSound;
+    private CameraBob cameraBob;
+    private CameraShake cameraShake;
+
     private int health;
 
     private void Start()
     {
         health = maxHealth;
+
+        playerSound = GetComponentInChildren<PlayerSound>();
+        cameraBob = GetComponentInChildren<CameraBob>();
+        cameraShake = GetComponentInChildren<CameraShake>();
+
+        UIController.HealthBar.MaxHealth = maxHealth;
+        UIController.HealthBar.Health = health;
     }
 
     public void Attack(Action callback)
     {
         if (CanAttack(out EnemyCombat enemyCombat))
         {
-            Debug.Log("player atk");
-
             enemyCombat.TakeDamage(damage);
         }
         else callback();
@@ -32,25 +41,42 @@ public class PlayerCombat : MonoBehaviour
 
         if (health > maxHealth)
             health = maxHealth;
+
+        UIController.HealthBar.Health = health;
     }
 
     public void TakeDamage(int damage)
     {
         health -= damage;
 
-        Debug.Log("player health " + health);
+        UIController.HealthBar.Health = health;
+
+        cameraBob.ResetSpeed();
 
         if (health <= 0)
         {
             Die();
         }
+        else
+        {
+            playerSound.Hit(() => { });
+
+            Vector2 direction = UnityEngine.Random.insideUnitCircle;
+            cameraShake.ShakeRotateCamera(direction, () =>
+            {
+                cameraBob.SetIdleSpeed();
+
+                Messenger.Broadcast(GameEvent.PLAYER_TURN);
+            });
+        }
     }
 
     private void Die()
     {
-        //Destroy(gameObject);
+        playerSound.Die(() => { UIController.DeathPopup.Show(); });
 
-        health = maxHealth;
+        Vector2 direction = Vector2.up;
+        cameraShake.ShakeRotateCamera(direction, () => { }, false);
     }
 
     public bool CanAttack()

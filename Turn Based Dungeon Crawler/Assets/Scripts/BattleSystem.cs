@@ -24,8 +24,6 @@ public class BattleSystem : MonoBehaviour
 
     private Enemy GetClosestEnemy()
     {
-        //Debug.Log(BattleSystem.Enemies.Count);
-
         Enemy enemy = Enemies[0];
 
         if (Enemies.Count == 1)
@@ -49,13 +47,11 @@ public class BattleSystem : MonoBehaviour
 
     private void OnEnemyTurn()
     {
-        //Debug.Log("cnt " + Enemies.Count);
-        Debug.Log("enemy turn");
+        Debug.Log("Enemy turn.");
 
         enemyTurn = true;
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (Enemies.Count > 0)
@@ -71,7 +67,6 @@ public class BattleSystem : MonoBehaviour
 
                 if (enemy.Combat.CanAttack())
                 {
-                    //Debug.Log("atk");
                     enemy.Combat.Attack();
                 }
                 else enemy.Movement.Chase();

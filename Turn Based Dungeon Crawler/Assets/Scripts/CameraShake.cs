@@ -6,6 +6,7 @@ using UnityEngine;
 public class CameraShake : MonoBehaviour
 {
     [SerializeField] private float speed = 8.0f;
+
     private Quaternion startRotation;
 
     private void Start()
@@ -13,12 +14,12 @@ public class CameraShake : MonoBehaviour
         startRotation = transform.localRotation;
     }
 
-    public void ShakeRotateCamera(Vector2 direction, Action callback)
+    public void ShakeRotateCamera(Vector2 direction, Action callback, bool shakeAndReturn = true)
     {
-        StartCoroutine(ShakeRotateCameraInternal(direction, callback));
+        StartCoroutine(ShakeRotateCameraInternal(direction, callback, shakeAndReturn));
     }
 
-    private IEnumerator ShakeRotateCameraInternal(Vector2 direction, Action callback)
+    private IEnumerator ShakeRotateCameraInternal(Vector2 direction, Action callback, bool shakeAndReturn)
     {
         direction = direction.normalized;
         Vector3 resDirection = ((Vector3)direction + Vector3.forward).normalized;
@@ -31,16 +32,19 @@ public class CameraShake : MonoBehaviour
             yield return null;
         }
 
-        for (float t = 0; t < 1; t += speed * Time.deltaTime)
+        if (shakeAndReturn)
         {
-            transform.localRotation = Quaternion.Lerp(targetRotation, startRotation, t);
+            for (float t = 0; t < 1; t += speed * Time.deltaTime)
+            {
+                transform.localRotation = Quaternion.Lerp(targetRotation, startRotation, t);
+
+                yield return null;
+            }
 
             yield return null;
+
+            transform.localRotation = startRotation;
         }
-
-        yield return null;
-
-        transform.localRotation = startRotation;
 
         callback();
     }

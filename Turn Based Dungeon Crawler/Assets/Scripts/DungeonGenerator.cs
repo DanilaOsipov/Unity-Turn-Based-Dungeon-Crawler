@@ -23,6 +23,8 @@ public class DungeonGenerator : MonoBehaviour
 
     [SerializeField] private GameObject exitCubePrefab;
 
+    [SerializeField] private GameObject ceilingGridPrefab;
+
     public static int EnemiesCount { get; set; }
 
     private int roomsCounter;
@@ -77,11 +79,31 @@ public class DungeonGenerator : MonoBehaviour
         SpawnHealings(map);
 
         CreateWalls(map);
+
+        CreateCeiling(map);
     }
 
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.PLAYER_ENTERED_THE_ROOM, RemoveEntranceTriggers);
+    }
+
+    private void CreateCeiling(MapCharValue[,] map)
+    {
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                if (map[i, j].Value != MapChar.Wall && map[i, j].Value != MapChar.Player)
+                {
+                    GameObject cube = Instantiate(ceilingGridPrefab);
+                    cube.transform.SetParent(transform);
+                    cube.transform.localPosition = new Vector3(i * cube.transform.localScale.x,
+                                                               wallCubePrefab.transform.localScale.y + cube.transform.localScale.y / 2, 
+                                                               j * cube.transform.localScale.x);
+                }
+            }
+        }
     }
 
     private void CreateExit(MapCharValue[,] map)

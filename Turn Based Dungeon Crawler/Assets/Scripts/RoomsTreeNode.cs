@@ -13,4 +13,3 @@ public class RoomsTreeNode
     public RoomsTreeNode Left { get; set; }
     public List<EntranceTrigger> EntranceTriggers { get; set; } 
 }
-

@@ -9,23 +9,36 @@ public class EnemyCombat : MonoBehaviour
     [SerializeField] private int damage = 5;
 
     private EnemyAnimation enemyAnimation;
+    private EnemySound enemySound;
 
     private int health;
+
+    private EnemyHealthBar healthBar;
+
+    public static int Damage { get; private set; }
 
     private void Start()
     {
         health = maxHealth;
 
         enemyAnimation = GetComponent<EnemyAnimation>();
+
+        enemySound = GetComponent<EnemySound>();
+
+        healthBar = GetComponentInChildren<EnemyHealthBar>();
+        healthBar.MaxHealth = maxHealth;
+        healthBar.Health = health;
+
+        Damage = damage;
     }
 
     public void Attack()
     {
         if (CanAttack(out PlayerCombat playerCombat))
         {
-            Debug.Log("enemy atk");
+            enemySound.AttackMoan(() => { });
 
-            enemyAnimation.Attack(() => { playerCombat.TakeDamage(damage); });
+            enemyAnimation.Attack(() => { });
         }
     }
 
@@ -33,7 +46,7 @@ public class EnemyCombat : MonoBehaviour
     {
         health -= damage;
 
-        Debug.Log("enemy hp " + health);
+        healthBar.Health = health;
 
         if (health <= 0)
         {
@@ -50,10 +63,6 @@ public class EnemyCombat : MonoBehaviour
         Pathfinding.Instance.RemoveObjectFromMap(transform);
 
         DungeonGenerator.EnemiesCount--;
-
-        Debug.Log(DungeonGenerator.EnemiesCount);
-
-        //Debug.Log(BattleSystem.Enemies.Count);
 
         Enemy enemy = GetComponent<Enemy>();
         BattleSystem.Enemies.Remove(enemy);

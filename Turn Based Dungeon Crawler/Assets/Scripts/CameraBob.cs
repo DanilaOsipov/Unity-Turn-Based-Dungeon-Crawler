@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class CameraBob : MonoBehaviour
 {
-    private float timer = 0;
     [SerializeField] private float bobbingAmount = 0.05f;
-    private float speed;
     [SerializeField] private float walkingSpeed = 20.0f;
     [SerializeField] private float idleSpeed = 2.0f;
+
+    private float timer = 0;
+    private float speed;
 
     private float DefaultY { get; set; }
 
@@ -24,12 +25,16 @@ public class CameraBob : MonoBehaviour
         if (speed != 0)
         {
             timer += Time.deltaTime * speed;
-            transform.localPosition = new Vector3(transform.localPosition.x, DefaultY + Mathf.Sin(timer) * bobbingAmount, transform.localPosition.z);
+            transform.localPosition = new Vector3(transform.localPosition.x, 
+                                                  DefaultY + Mathf.Sin(timer) * bobbingAmount, 
+                                                  transform.localPosition.z);
         }
         else
         {
             timer = 0;
-            transform.localPosition = new Vector3(transform.localPosition.x, Mathf.Lerp(transform.localPosition.y, DefaultY, Time.deltaTime * speed), transform.localPosition.z);
+            transform.localPosition = new Vector3(transform.localPosition.x, 
+                                                  Mathf.Lerp(transform.localPosition.y, DefaultY, Time.deltaTime * speed), 
+                                                  transform.localPosition.z);
         }
     }
 
